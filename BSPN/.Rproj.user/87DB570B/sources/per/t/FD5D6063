@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533144839402.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "FD5D6063",
+    "lastKnownWriteTime" : 538976288,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "46698B07",
+        "caption" : "BP_ts_Uniao",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=BP_ts_Uniao&cache_key=46698B07",
+        "displayedObservations" : 213,
+        "environment" : "",
+        "object" : "BP_ts_Uniao",
+        "preview" : 0,
+        "totalObservations" : 213,
+        "variables" : 6
+    },
+    "relative_order" : 29,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

@@ -1,0 +1,4 @@
+"0","radioButtons(""tipo_analise_den"","
+"0","             ""Selecione o tipo de análise para denominador"","
+"0","             choices = c(""Análise Vertical""= ""V"",                                                                      ""Análise Horizontal""= ""H""),"
+"0","             selected = ""V"")"

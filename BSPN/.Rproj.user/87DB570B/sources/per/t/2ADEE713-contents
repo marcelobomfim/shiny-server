@@ -1,0 +1,173 @@
+#install.packages('jsTree')
+remotes::install_github('metrumresearchgroup/jsTree')
+
+# library(jsTree)
+# data(states)
+# data(state_bird)
+# 
+# nested_string <- apply(states,1,paste,collapse='/')
+# jsTree(nested_string)
+# jsTree(nested_string,tooltips = state_bird)
+# 
+# nested_string <- apply(states,1,paste,collapse='|-|')
+# jsTree(nested_string,sep = '|-|')
+# render
+
+
+#lê arquivo da estrutura do BP
+
+library(xlsx)
+library(readxl)
+library(stringr)
+library(stringi)
+
+setwd("C:/Users/fernando.barbalho/OneDrive - Secretaria do Tesouro Nacional/Projetos CEAD/BSPN")
+
+
+
+PCASP_2017 <- read_excel("PCASP 2017.xlsx", n_max = 1606)
+
+
+#PCASP_2017 <- read.xlsx2(file = "PCASP 2017.xlsx", sheetIndex = 1, endRow = 1606, encoding = "latin1")
+
+PCASP_2017$CONTA_tratada<-gsub("[[:punct:]]", "", PCASP_2017$CONTA)
+
+names(PCASP_2017)[9] <- "titulo_conta"
+
+monta_estrutura<- data.frame(nivel_1="",
+                             nivel_2="",
+                             nivel_3="",
+                             nivel_4="",
+                             nivel_5="")
+
+#Exclui as rubricas de nível 6 e 7
+PCASP_trabalho<-PCASP_2017[ PCASP_2017$ÍTEM=="00",]
+PCASP_trabalho$GRUPO<-substr(PCASP_trabalho$CONTA_tratada,1,2)
+PCASP_trabalho$SUBGRUPO <- substr(PCASP_trabalho$CONTA_tratada,1,3)
+PCASP_trabalho$TÍTULO<- substr(PCASP_trabalho$CONTA_tratada,1,4)
+PCASP_trabalho$SUBTÍTULO <- substr(PCASP_trabalho$CONTA_tratada,1,5)
+PCASP_trabalho$NOME_COMPLETO <- paste0(PCASP_trabalho$CONTA," - ",PCASP_trabalho$titulo_conta)
+
+save(list = "PCASP_trabalho", file = "PCASP_trabalho.RData")
+
+GRUPO <- PCASP_trabalho$GRUPO[substr(PCASP_trabalho$GRUPO,2,2)!="0"]
+SUBGRUPO <- PCASP_trabalho$SUBGRUPO[substr(PCASP_trabalho$SUBGRUPO,3,3)!="0"]
+TÍTULO <- PCASP_trabalho$TÍTULO[substr(PCASP_trabalho$TÍTULO,4,4)!="0"]
+SUBTÍTULO <- PCASP_trabalho$SUBTÍTULO[substr(PCASP_trabalho$SUBTÍTULO,5,5) != "0"]
+
+
+
+lista_contas <- list()
+
+for (classe in unique(PCASP_trabalho$CLASSE)){
+  monta_estrutura$nivel_1 <- PCASP_trabalho$NOME_COMPLETO[PCASP_trabalho$CONTA_tratada == paste0(classe,"00000000" )][1]
+
+  for (grupo in unique(GRUPO[substr(GRUPO,1,1)==classe])){
+    monta_estrutura$nivel_2 <- PCASP_trabalho$NOME_COMPLETO[PCASP_trabalho$CONTA_tratada == paste0(grupo,"0000000" )][1]
+    
+    if (length(unique(SUBGRUPO[substr(SUBGRUPO,1,2)==grupo]))==0){
+      monta_estrutura$nivel_3 <- NA
+      monta_estrutura$nivel_4 <- NA
+      monta_estrutura$nivel_5 <- NA
+      estrutura_pcasp <- rbind(estrutura_pcasp,monta_estrutura)
+      texto_estrutura <- paste0("lista_contas$'",
+                                monta_estrutura$nivel_1,"'$'",
+                                monta_estrutura$nivel_2,"'<-0")
+      
+      #print(paste0("Antes ", texto_estrutura))
+      #texto_estrutura <-stri_trans_general(texto_estrutura,"Latin-ASCII")
+      #print(paste0("Depois ", texto_estrutura))
+      
+      #Encoding(texto_estrutura) <- "latin1"
+      
+      eval(parse( text=texto_estrutura))
+      
+    } 
+      
+    
+    for (subgrupo in unique(SUBGRUPO[substr(SUBGRUPO,1,2)==grupo])){
+      monta_estrutura$nivel_3 <- PCASP_trabalho$NOME_COMPLETO[PCASP_trabalho$CONTA_tratada == paste0(subgrupo,"000000" )][1]
+      if (length(unique(TÍTULO[substr(TÍTULO,1,3)==subgrupo]))==0){
+        monta_estrutura$nivel_4 <- NA
+        monta_estrutura$nivel_5 <- NA
+        estrutura_pcasp <- rbind(estrutura_pcasp,monta_estrutura)
+        
+        texto_estrutura<-paste0("lista_contas$'",
+                                monta_estrutura$nivel_1,"'$'",
+                                monta_estrutura$nivel_2,"'$'",
+                                monta_estrutura$nivel_3,"'<-0")
+        print(paste0("Antes ",texto_estrutura))
+
+        eval(parse(text=texto_estrutura))
+        
+        print(paste0("Depois ", texto_estrutura))
+      } 
+        
+
+      for (titulo in unique(TÍTULO[substr(TÍTULO,1,3)==subgrupo])){
+        monta_estrutura$nivel_4 <- PCASP_trabalho$NOME_COMPLETO[PCASP_trabalho$CONTA_tratada == paste0(titulo,"00000" )][1]
+        if (length(unique(SUBTÍTULO[substr(SUBTÍTULO,1,4)==titulo]))==0){
+          monta_estrutura$nivel_5 <- NA
+          estrutura_pcasp <- rbind(estrutura_pcasp,monta_estrutura)
+          eval(parse(text=paste0("lista_contas$'",
+                                 monta_estrutura$nivel_1,"'$'",
+                                 monta_estrutura$nivel_2,"'$'",
+                                 monta_estrutura$nivel_3,"'$'",
+                                 monta_estrutura$nivel_4,"'<-0")))
+         
+
+        } 
+        
+        for(subtitulo in unique(SUBTÍTULO[substr(SUBTÍTULO,1,4)==titulo])){
+          monta_estrutura$nivel_5 <- PCASP_trabalho$NOME_COMPLETO[PCASP_trabalho$CONTA_tratada == paste0(subtitulo,"0000" )][1]
+          
+          if (!exists("estrutura_pcasp")){
+            estrutura_pcasp <- monta_estrutura
+            
+          } else{
+            estrutura_pcasp <- rbind(estrutura_pcasp,monta_estrutura)
+            eval(parse(text=paste0("lista_contas$'",
+                                   monta_estrutura$nivel_1,"'$'",
+                                   monta_estrutura$nivel_2,"'$'",
+                                   monta_estrutura$nivel_3,"'$'",
+                                   monta_estrutura$nivel_4,"'$'",
+                                   monta_estrutura$nivel_5,"'<-0")))
+            
+          }
+            
+        
+          
+        }
+      }
+      
+      
+    }
+  }
+
+}
+
+nivel_1_2<-unique(estrutura_pcasp[!is.na(estrutura_pcasp$nivel_1),c(1:2,1)])
+nivel_2_3<-unique(estrutura_pcasp[!is.na(estrutura_pcasp$nivel_2),c(2:3,1)])
+nivel_3_4<-unique(estrutura_pcasp[!is.na(estrutura_pcasp$nivel_3),c(3:4,1)])
+nivel_4_5<-unique(estrutura_pcasp[!is.na(estrutura_pcasp$nivel_4),c(4:5,1)])
+
+
+
+names(nivel_1_2)<- c("pai","filho","raiz")
+names(nivel_2_3)<- c("pai","filho","raiz")
+names(nivel_3_4)<- c("pai","filho","raiz")
+names(nivel_4_5)<- c("pai","filho","raiz")
+
+
+estrutura_bidimensional <- rbind(nivel_1_2,
+                                 nivel_2_3,
+                                 nivel_3_4,
+                                 nivel_4_5)
+
+lista_contas<-lista_contas[-c(5:8)]
+
+save(list="lista_contas",file="contas_pcasp")
+save(list = "estrutura_pcasp", file = "estrutura_pcasp")
+
+save(list="estrutura_bidimensional", file ="esturutra_bidimensional")
+

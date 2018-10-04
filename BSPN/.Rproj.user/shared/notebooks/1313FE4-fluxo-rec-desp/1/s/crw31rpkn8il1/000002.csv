@@ -1,0 +1,41 @@
+"0","
+h1,h2,h3,h4 {
+  color: #004a93;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+blockquote {
+  font-size: 12px;
+  background-color: #edeff9; 
+}
+
+.destaques {
+  padding: 1%;
+  background-color: #eae6af;
+}
+
+.destaques ul {
+  color: #004a93;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.destaques a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.destaques p {
+  padding: 1%;
+}
+
+.destaques p:hover{
+  color: #eae6af;
+  background-color: #004a93;
+}"
+"2","/bin/sh: css: comando não encontrado
+"

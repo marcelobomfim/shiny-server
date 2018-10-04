@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533825668435.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "F99BB878",
+    "lastKnownWriteTime" : 5439520,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "08576c699bc84a8c85baf5c3c587ce35",
+        "name" : "bigram_graph",
+        "title" : "bigram_graph"
+    },
+    "relative_order" : 23,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

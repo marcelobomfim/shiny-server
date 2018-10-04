@@ -1,0 +1,11 @@
+"0","filename = function() {"
+"0","  paste('Indicador-', Sys.Date(), '.csv', sep='')"
+"0","}"
+"0","content = function(file) {"
+"0","  #write.csv2(dados_tabela, file, row.names = FALSE)"
+"0","  write.table(dados_tabela, file, sep = "";"",row.names = FALSE,fileEncoding = ""UTF-8"",dec="","")"
+"0","}"
+"0","output$DownloadInd<- downloadHandler( filename, content)"
+"2","Error in output$DownloadInd <- downloadHandler(filename, content) : 
+  objeto 'output' não encontrado
+"

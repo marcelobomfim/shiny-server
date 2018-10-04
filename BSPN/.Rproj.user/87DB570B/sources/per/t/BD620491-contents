@@ -1,0 +1,102 @@
+library(readxl)
+BP_municipios <- read_excel("BSPN 2017.xlsx", 
+                        col_types = c("blank", "text", "numeric", 
+                                      "blank", "numeric", "numeric", "blank", 
+                                      "blank", "blank"), skip = 1, n_max = 737)
+
+
+                         
+BP_municipios$esfera<-"MUNICIPIOS"
+names(BP_municipios)[2]<-"valor_bruto"
+                         
+BP_Estados <- read_excel("BSPN 2017.xlsx", 
+                         col_types = c("blank", "text", "numeric", 
+                                       "blank", "numeric", "numeric", "blank", 
+                                       "blank", "blank"), skip = 745, n_max = 737)
+BP_Estados$esfera <- "ESTADOS"
+names(BP_Estados)[2]<-"valor_bruto"
+
+BP_uniao <- read_excel("BSPN 2017.xlsx", 
+                   col_types = c("blank", "text", "numeric", 
+                                 "blank", "numeric", "numeric", "blank", 
+                                 "blank", "blank"), skip = 1489, n_max = 737)
+BP_uniao$esfera <- "UNIAO"
+names(BP_uniao)[2]<-"valor_bruto"
+
+BP_Geral <- rbind(BP_municipios,BP_Estados,BP_uniao)
+
+names(BP_Geral)<- c("conta", "valor_bruto","exclusoes","valor_consolidado","esfera")
+BP_Geral$data <-"2017-12-31"
+
+BP_Geral$valor_consolidado[is.na(BP_Geral$valor_consolidado)]<-BP_Geral$valor_bruto[is.na(BP_Geral$valor_consolidado)]
+BP_Geral<-BP_Geral[!BP_Geral$conta=="Contas de Compensação",]
+
+BP_Geral$valor_consolidado[BP_Geral$valor_consolidado==0] <-BP_Geral$valor_bruto[BP_Geral$valor_consolidado==0]
+
+BP_Geral[BP_Geral$valor_consolidado==0,]
+
+
+
+BP_Geral<- BP_Geral[,c(6,5,1:4)]
+
+
+#########################DVP
+
+DVP_municipios <- read_excel("BSPN 2017.xlsx", 
+                            col_types = c("blank", "text", "numeric", 
+                                          "blank", "numeric", "numeric", "blank", 
+                                          "blank", "blank"), skip = 2230, n_max = 721)
+
+
+
+DVP_municipios$esfera<-"MUNICIPIOS"
+names(DVP_municipios)[2]<-"valor_bruto"
+
+
+DVP_Estados <- read_excel("BSPN 2017.xlsx", 
+                             col_types = c("blank", "text", "numeric", 
+                                           "blank", "numeric", "numeric", "blank", 
+                                           "blank", "blank"), skip = 2959, n_max = 721)
+
+
+
+DVP_Estados$esfera<-"ESTADOS"
+names(DVP_Estados)[2]<-"valor_bruto"
+
+
+DVP_Uniao <- read_excel("BSPN 2017.xlsx", 
+                          col_types = c("blank", "text", "numeric", 
+                                        "blank", "numeric", "numeric", "blank", 
+                                        "blank", "blank"), skip = 3690, n_max = 721)
+
+
+
+DVP_Uniao$esfera<-"UNIAO"
+names(DVP_Uniao)[2]<-"valor_bruto"
+
+DVP_Geral <- rbind(DVP_municipios,DVP_Estados,DVP_Uniao)
+
+names(DVP_Geral)<- c("conta", "valor_bruto","exclusoes","valor_consolidado","esfera")
+DVP_Geral$data <-"2017-12-31"
+
+#DVP_Geral$valor_consolidado[is.na(DVP_Geral$valor_consolidado)]<-DVP_Geral$valor_bruto[is.na(DVP_Geral$valor_consolidado)]
+#BP_Geral<-BP_Geral[!BP_Geral$conta=="Contas de Compensação",]
+
+DVP_Geral$valor_consolidado[DVP_Geral$valor_consolidado==0] <-DVP_Geral$valor_bruto[DVP_Geral$valor_consolidado==0]
+
+#DVP_Geral[DVP_Geral$valor_consolidado==0,]
+
+
+
+DVP_Geral<- DVP_Geral[,c(6,5,1:4)]
+
+
+#######################################################################
+
+#Vai usar BP_Geral para manter compatibilidade com o código da análise
+
+BP_Geral <- rbind(BP_Geral,DVP_Geral)
+
+BP_Geral <-BP_Geral[!(BP_Geral$conta%in%c("2.1.0.0.0.00.00 - Passivo Circulante - Financeiro","2.2.0.0.0.00.00 - Passivo Não Circulante - Financeiro")),]
+
+save(list="BP_Geral",file = "BP_Geral.Rdata")

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1529930984488.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2128180972",
+    "id" : "BD620491",
+    "lastKnownWriteTime" : 1533822580,
+    "last_content_update" : -2147483648,
+    "path" : "C:/Users/fernando.barbalho/OneDrive - Secretaria do Tesouro Nacional/Projetos CEAD/BSPN/ETL.R",
+    "project_path" : "ETL.R",
+    "properties" : {
+        "cursorPosition" : "99,153",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

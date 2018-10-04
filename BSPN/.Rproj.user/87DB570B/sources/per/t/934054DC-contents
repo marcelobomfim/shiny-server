@@ -1,0 +1,57 @@
+library(dplyr)
+library(tidytext)
+library(tidyr)
+library(scales)
+library(ggplot2)
+library(igraph)
+library(ggraph)
+library(widyr)
+
+
+#criacção do dataframe que será utilizado para o tratamento de texto
+funcao_contabil<- PCASP_trabalho[,c(1,15,10)]
+names(funcao_contabil)[3]<-"FUNCAO"
+
+
+texto_df <- dplyr::data_frame(classe = funcao_contabil$CLASSE,conta= funcao_contabil$NOME_COMPLETO, texto =funcao_contabil$FUNCAO)
+
+
+#contabem de palavras...
+analise_contabil <- texto_df %>%
+  unnest_tokens(palavra,texto) %>%
+  count(classe, palavra, sort = TRUE) %>%
+  ungroup()
+
+total_palavras <- analise_contabil %>%
+  group_by(classe) %>%
+  summarize(total=sum(n))
+
+
+
+analise_contabil <- left_join(analise_contabil, total_palavras)
+
+#...para o tratamento tf_idf...
+analise_contabil <- analise_contabil %>%
+  bind_tf_idf(palavra, classe, n)
+
+#...que gerrá as stopwords específicas para o pcasp
+stop_words_pcasp <- unique(c(unique(analise_contabil$palavra[analise_contabil$idf==0]), stopwords::stopwords("pt")))
+
+analise_contabil_secoes <- dplyr::data_frame(classe = funcao_contabil$CLASSE, texto =funcao_contabil$FUNCAO) %>%
+  mutate(section = row_number() %/% 10) %>%
+  filter(section > 0) %>%
+  unnest_tokens(word, texto) %>%
+  filter(!word %in% stop_words_pcasp)
+
+# count words co-occuring within sections
+word_pairs <- analise_contabil_secoes %>%
+  pairwise_count(word, section, sort = TRUE)
+
+
+# we need to filter for at least relatively common words first
+word_cors <- analise_contabil_secoes %>%
+  group_by(word) %>%
+  filter(n() >= 20) %>%
+  pairwise_cor(word, section, sort = TRUE)
+
+save(list="word_cors",file = "word_cords.rDATA")

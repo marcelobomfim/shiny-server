@@ -1,0 +1,79 @@
+---
+title: "Exploração dos dados do BSPN"
+output: 
+  flexdashboard::flex_dashboard:
+    social: menu
+    source_code: embed
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+library(shinyTree)
+
+
+load("contas_pcasp")
+
+```
+
+Page 1
+-----------------------------------------------------------------------
+
+### Numerador
+
+```{r}
+shinyApp(
+  ui = fillRow( flex = c(NA,1), height = 1000,
+    
+   
+    sidebarPanel(
+       radioButtons("plano_num",
+                     "Selecione o plano de contas numerador",
+                     c("PCASP" = "P"),
+                     selected = "P"),
+         radioButtons("plano_den",
+                     "Selecione o plano de contas denominador",
+                     c("PCASP" = "P"),
+                     selected = "P")),
+      
+     fillCol( flex = c(1,1), height = 1000, 
+      
+       shinyTree("tree1"),
+       shinyTree("tree2"))),
+  
+
+  server = function(input, output) {
+    output$tree1 <- renderTree({
+    lista_contas
+    
+  })
+
+    output$tree2 <- renderTree({
+    lista_contas
+    
+  })
+
+    
+  },
+  options = list(height = 600)
+)
+
+# 
+# fillCol(height = 600, flex = c(NA, 1), 
+#          radioButtons("plano_num",
+#                      "Selecione o plano de contas numerador",
+#                      c("PCASP" = "P"),
+#                      selected = "P"),
+# 
+#          radioButtons("plano_den",
+#                      "Selecione o plano de contas denominador",
+#                      c("PCASP" = "P"),
+#                      selected = "P"),
+#          shinyTree("tree"))
+# 
+# output$tree <- renderTree({
+#     lista_contas
+#     
+#   })
+
+
+```

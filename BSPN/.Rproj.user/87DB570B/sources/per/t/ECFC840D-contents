@@ -1,0 +1,71 @@
+library(shiny)
+library(shinyTree)
+library(DT)
+library(tidyr)
+
+#' Define server logic required to generate a simple tree
+#' @author Jeff Allen \email{jeff@@trestletech.com}
+shinyServer(function(input, output, session) {
+  log <- c(paste0(Sys.time(), ": Interact with the tree to see the logs here..."))
+  
+  load("BP_Geral.Rdata")
+  load("PCASP_trabalho.Rdata")
+  
+  rubrica_sel<- "Ativo"
+  demonstrativo<- BP_Geral
+  estrutura<- PCASP_trabalho
+  
+  gera_DadosTabela<-function(rubrica_sel,demonstrativo,estrutura){
+    rubrica_sel <- toupper(rubrica_sel)
+    
+    codigo_sel<- estrutura$CONTA[estrutura$titulo_conta==rubrica_sel]
+    
+    rubrica_id_completo <- paste0(codigo_sel," - ",rubrica_sel)
+    
+    demo_Filtro<-demonstrativo[toupper(demonstrativo$conta)==rubrica_id_completo,c(2,6)]
+    
+    dados_tabela<-spread(demo_Filtro,key = "esfera", value = "valor_consolidado")
+    
+    dados_tabela
+
+  }
+  
+  
+  output$treeNum <- renderTree({
+    lista_contas
+    
+  })
+  
+  output$treeDen <- renderTree({
+    lista_contas
+    
+  })
+  
+  
+  output$selTxtNum <- renderText({
+    tree <- input$treeNum
+    if (is.null(tree)){
+      "None"
+    } else{
+      unlist(get_selected(tree))
+    }
+  })
+  
+  
+  output$selTxtDen <- renderText({
+    tree <- input$treeDen
+    if (is.null(tree)){
+      "None"
+    } else{
+      unlist(get_selected(tree))
+    }
+  })
+  
+  output$Tabela_Numerador <- DT::renderDataTable({
+    
+    dados_tabela<-gera_DadosTabela(unlist(get_selected(input$treeNum)),
+                     BP_Geral,
+                     PCASP_trabalho) 
+    datatable(dados_tabela,rownames = FALSE,extensions = 'Responsive')
+  })
+})

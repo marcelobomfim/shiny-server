@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533146989514.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4BC36F3",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CDE44842",
+        "caption" : "BSPN_ts",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=BSPN_ts&cache_key=CDE44842",
+        "displayedObservations" : 8340,
+        "environment" : "",
+        "object" : "BSPN_ts",
+        "preview" : 0,
+        "totalObservations" : 8340,
+        "variables" : 5
+    },
+    "relative_order" : 30,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

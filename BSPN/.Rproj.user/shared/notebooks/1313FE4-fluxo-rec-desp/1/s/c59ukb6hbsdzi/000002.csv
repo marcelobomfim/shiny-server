@@ -1,0 +1,5 @@
+"0","tamanho_critico <- 500000000 "
+"0","ramos_a_limpar <- matriz %>% filter(ramo<tamanho_critico) #fazer no shiny"
+"0","matriz_original <- matriz"
+"0","matriz <- matriz %>%"
+"0","  anti_join(ramos_a_limpar)"

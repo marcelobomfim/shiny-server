@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533757296413.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7745B0C5",
+    "lastKnownWriteTime" : 3407971,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "DC20DC9",
+        "caption" : "freq_by_rank",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=freq_by_rank&cache_key=DC20DC9",
+        "displayedObservations" : 3777,
+        "environment" : "",
+        "object" : "freq_by_rank",
+        "preview" : 0,
+        "totalObservations" : 3777,
+        "variables" : 6
+    },
+    "relative_order" : 22,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

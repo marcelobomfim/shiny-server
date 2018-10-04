@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1538139439449.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "369AF6DC",
+    "lastKnownWriteTime" : 1537983237,
+    "last_content_update" : 1537983237,
+    "path" : "~/Área de trabalho/stn/fluxo-rec-desp/fluxo-rec-desp.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "8,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

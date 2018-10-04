@@ -1,0 +1,12 @@
+name: BSPN
+title: BSPN
+username:
+account: fabdev
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 393976
+bundleId: 1563962
+url: https://fabdev.shinyapps.io/BSPN/
+when: 1535734427.09869
+asMultiple: FALSE
+asStatic: FALSE

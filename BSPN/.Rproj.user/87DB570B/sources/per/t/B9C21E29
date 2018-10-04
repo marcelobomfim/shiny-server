@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1532638339599.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B9C21E29",
+    "lastKnownWriteTime" : 5439488,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "8DA6646C",
+        "caption" : "estrutura",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=estrutura&cache_key=8DA6646C",
+        "displayedObservations" : 1418,
+        "environment" : "",
+        "object" : "estrutura",
+        "preview" : 0,
+        "totalObservations" : 1418,
+        "variables" : 14
+    },
+    "relative_order" : 27,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

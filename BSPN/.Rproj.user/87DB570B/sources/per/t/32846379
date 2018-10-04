@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1534444290803.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "32846379",
+    "lastKnownWriteTime" : 5439520,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "7862A5C6",
+        "caption" : "analise_contabil_secoes",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=analise_contabil_secoes&cache_key=7862A5C6",
+        "displayedObservations" : 30763,
+        "environment" : "",
+        "object" : "analise_contabil_secoes",
+        "preview" : 0,
+        "totalObservations" : 30763,
+        "variables" : 3
+    },
+    "relative_order" : 26,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

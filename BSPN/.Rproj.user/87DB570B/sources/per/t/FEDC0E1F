@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533733729650.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "FEDC0E1F",
+    "lastKnownWriteTime" : 4587552,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "E3142F5E",
+        "caption" : "analise_contabil",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=analise_contabil&cache_key=E3142F5E",
+        "displayedObservations" : "3777",
+        "environment" : "",
+        "object" : "analise_contabil",
+        "preview" : "0",
+        "totalObservations" : "3777",
+        "variables" : "4"
+    },
+    "relative_order" : 21,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

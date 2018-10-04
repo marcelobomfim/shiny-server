@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533827153565.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "AC94931D",
+    "lastKnownWriteTime" : 6,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "541FEBCD",
+        "caption" : "word_cors",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=word_cors&cache_key=541FEBCD",
+        "displayedObservations" : "71022",
+        "environment" : "",
+        "object" : "word_cors",
+        "preview" : "0",
+        "totalObservations" : "71022",
+        "variables" : "3"
+    },
+    "relative_order" : 25,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

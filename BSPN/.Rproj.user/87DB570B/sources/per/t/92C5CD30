@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1537536659370.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "92C5CD30",
+    "lastKnownWriteTime" : 1818321522,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "759482B2",
+        "caption" : "estrutura_pcasp",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=estrutura_pcasp&cache_key=759482B2",
+        "displayedObservations" : 837,
+        "environment" : "",
+        "object" : "estrutura_pcasp",
+        "preview" : 0,
+        "totalObservations" : 837,
+        "variables" : 5
+    },
+    "relative_order" : 32,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

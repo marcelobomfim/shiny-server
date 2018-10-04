@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1535651279376.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4293413329",
+    "id" : "934054DC",
+    "lastKnownWriteTime" : 1535651307,
+    "last_content_update" : -2147483648,
+    "path" : "C:/Users/fernando.barbalho/OneDrive - Secretaria do Tesouro Nacional/Projetos CEAD/BSPN/gera_correlacao_palavaras.R",
+    "project_path" : "gera_correlacao_palavaras.R",
+    "properties" : {
+        "cursorPosition" : "56,48",
+        "scrollLine" : "0",
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 31,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

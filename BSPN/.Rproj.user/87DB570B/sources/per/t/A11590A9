@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533825765381.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A11590A9",
+    "lastKnownWriteTime" : 5439520,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "608FD350",
+        "caption" : "bigram_counts",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=bigram_counts&cache_key=608FD350",
+        "displayedObservations" : 1634,
+        "environment" : "",
+        "object" : "bigram_counts",
+        "preview" : 0,
+        "totalObservations" : 1634,
+        "variables" : 3
+    },
+    "relative_order" : 24,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

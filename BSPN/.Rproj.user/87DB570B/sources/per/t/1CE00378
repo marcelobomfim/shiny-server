@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1533732291389.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "1CE00378",
+    "lastKnownWriteTime" : 5439520,
+    "last_content_update" : -2147483648,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "9982B3F",
+        "caption" : "PCASP_trabalho",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=PCASP_trabalho&cache_key=9982B3F",
+        "displayedObservations" : 1418,
+        "environment" : "",
+        "object" : "PCASP_trabalho",
+        "preview" : 0,
+        "totalObservations" : 1418,
+        "variables" : 15
+    },
+    "relative_order" : 21,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

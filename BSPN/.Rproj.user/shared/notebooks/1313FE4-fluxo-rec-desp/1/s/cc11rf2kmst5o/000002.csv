@@ -1,0 +1,8 @@
+"0","```r
+matriz <- matriz %>%
+  left_join(tab_aux, by = c(\"nr\" = \"rotulos\")) %>%
+  left_join(tab_aux, by = c(\"nd\" = \"rotulos\"), suffix = c(\"_rec\",\"_desp\"))
+
+```"
+"1","Column `nr`/`rotulos` joining character vector and factor, coercing into character vectorColumn `nd`/`rotulos` joining character vector and factor, coercing into character vector
+"

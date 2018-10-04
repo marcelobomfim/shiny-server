@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1532369867524.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2194905454",
+    "id" : "E79CBC55",
+    "lastKnownWriteTime" : 1532381033,
+    "last_content_update" : -2147483648,
+    "path" : "C:/Users/fernando.barbalho/OneDrive - Secretaria do Tesouro Nacional/Projetos CEAD/BSPN/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+        "cursorPosition" : "22,39",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 24,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

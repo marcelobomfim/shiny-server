@@ -1,0 +1,634 @@
+---
+title: "Análise de demonstrativos BSPN"
+output: 
+  flexdashboard::flex_dashboard:
+    social: menu
+    source_code: embed
+runtime: shiny
+---
+
+```{css, echo=FALSE}
+#treeNum {
+ font-family: "Source Sans Pro";
+}
+
+#treeDen {
+ font-family: "Source Sans Pro";
+}
+
+
+```
+
+
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(shinyTree)
+library(DT)
+library(tidyr)
+library(dplyr)
+library(kableExtra)
+library(ggplot2)
+
+
+load("BP_Geral.Rdata")
+load("PCASP_trabalho.Rdata")
+load("contas_pcasp")
+load("estrutura_pcasp")
+load("esturutra_bidimensional")
+load("BSPN_ts.Rdata")
+load("word_cors.Rdata")
+
+BP_Geral$codigo<-substr(BP_Geral$conta,1,15)
+
+#"1.1.0.0.0.00.00 - ATIVO CIRCULANTE"
+#gera_DadosTabela( demonstrativo = BP_Geral, estrutura = estrutura_pcasp, dados_bruto = TRUE, rubricas_selecionadas = c("3.1.1.0.0.00.00 - REMUNERAÇÃO A PESSOAL") )
+
+
+gera_DadosTabela<-function(rubrica_sel_num=NULL,rubrica_sel_den=NULL, demonstrativo,estrutura, div_milhao=TRUE, dados_bruto=FALSE, rubricas_selecionadas=NULL){
+
+  demonstrativo$conta <- toupper(demonstrativo$conta)
+  
+  
+  if (is.null(rubricas_selecionadas)){
+    rubrica_sel <- c(rubrica_sel_num,rubrica_sel_den)
+    rubrica_sel <- toupper(rubrica_sel)
+  } else {
+    rubrica_sel<- rubricas_selecionadas
+  }
+  
+  
+  demo_Filtro<-demonstrativo[demonstrativo$codigo%in%substr(rubrica_sel,1,15),c(2,3,6,7)]
+  
+  if (length(rubrica_sel)>1){
+    if (rubrica_sel[1]!=rubrica_sel[2]){
+      rubrica_sel <- factor(rubrica_sel,rubrica_sel, ordered = is.ordered(rubrica_sel))
+      demo_Filtro$codigo <- factor(demo_Filtro$codigo,substr(rubrica_sel,1,15), ordered = is.ordered(substr(rubrica_sel,1,15)))
+    }
+    
+  }
+  
+  
+  
+  demo_Filtro <- demo_Filtro %>% group_by(codigo)
+  demo_Filtro <- demo_Filtro %>% arrange(codigo) 
+  
+  
+  
+  if (div_milhao){ demo_Filtro$valor_consolidado <- trunc(demo_Filtro$valor_consolidado/(10^9))  }
+  
+  if(dados_bruto) {
+    demo_Filtro<-demo_Filtro[,c(1:3)]
+    names(demo_Filtro)[2]<-"conta"
+    return(demo_Filtro)}
+  
+  
+  dados_tabela<-spread(demo_Filtro,key = "esfera", value = "valor_consolidado")
+  dados_tabela<- dados_tabela%>%arrange(codigo)
+  dados_tabela<-dados_tabela[,c(1,3:5)]
+  
+  if (NROW(dados_tabela)==1){
+    dados_tabela<-rbind(dados_tabela,dados_tabela)
+  }
+  
+  
+  names(dados_tabela)[1]<-"conta"
+  
+  
+  dados_tabela <- rbind(data.frame(dados_tabela),data.frame(conta="Quociente",ESTADOS=dados_tabela$ESTADOS[1]/dados_tabela$ESTADOS[2], MUNICIPIOS=dados_tabela$MUNICIPIOS[1]/dados_tabela$MUNICIPIOS[2], UNIAO= dados_tabela$UNIAO[1]/dados_tabela$UNIAO[2]))
+  
+dados_tabela$ESTADOS[1:2]<-format(dados_tabela$ESTADOS[1:2], big.mark = ".", decimal.mark = ",",scientific = FALSE, digits = 0)
+  dados_tabela$ESTADOS[3]<-paste0(format(as.numeric(dados_tabela$ESTADOS[3])*100, big.mark = ".", decimal.mark = ",",scientific = FALSE, digits = 4),"%")
+
+
+
+dados_tabela$MUNICIPIOS[1:2]<-format(dados_tabela$MUNICIPIOS[1:2], big.mark = ".", decimal.mark = ",",scientific = FALSE, digits = 0)
+  dados_tabela$MUNICIPIOS[3]<-paste0(format(as.numeric(dados_tabela$MUNICIPIOS[3])*100, big.mark = ".", decimal.mark = ",",scientific = FALSE, digits = 4),"%")
+
+  
+  
+  dados_tabela$UNIAO[1:2]<-format(dados_tabela$UNIAO[1:2], big.mark = ".", decimal.mark = ",",scientific = FALSE, digits = 0)
+  dados_tabela$UNIAO[3]<-paste0(format(as.numeric(dados_tabela$UNIAO[3])*100, big.mark = ".", decimal.mark = ",",scientific = FALSE, digits = 4),"%")
+  
+  
+  names(dados_tabela)[1] <- "Conta/Indicador"
+  
+  dados_tabela
+  
+}
+
+geraGraficoAnalise<-function(rubrica,tipo_analise, esfera){
+  
+  if (tipo_analise=="V"){
+    base_filtro<-estrutura_bidimensional[estrutura_bidimensional$pai==rubrica,]
+    
+    
+    if (NROW(base_filtro)>0){
+      df_av<-gera_DadosTabela(rubricas_selecionadas = c(base_filtro$filho),
+                              demonstrativo =  BP_Geral,
+                              estrutura =  PCASP_trabalho,
+                              dados_bruto = TRUE)} 
+    else{
+      df_av<-gera_DadosTabela(rubricas_selecionadas = c(rubrica),
+                              demonstrativo =  BP_Geral,
+                              estrutura =  PCASP_trabalho,
+                              dados_bruto = TRUE)
+    }
+    
+    dados_grafico<-data.frame(df_av)
+    
+    dados_grafico<- dados_grafico[dados_grafico$esfera %in% esfera,]
+    p<-ggplot(dados_grafico, aes(fill = substr(conta,19,100), y = valor_consolidado, x = esfera)) +
+      #coord_flip() +
+      geom_bar(stat="identity", width=0.6, color = "white", size = 1) +
+      geom_text(aes(label= ifelse(valor_consolidado == 0, "", format(round(valor_consolidado,0), big.mark = ".", decimal.mark = ","))),
+                size = 2.5,
+                hjust = 0.5,
+                position = position_stack(vjust = 0.5),
+                family = "Source Sans Pro",
+                color = "grey20") +
+      scale_y_continuous(labels=function(x) {format(x, big.mark = ".", decimal.mark=",", scientific = FALSE)}) +
+      
+      # scale_color_manual(values = cores_legenda) + #se fosse colocar os rótulos com as mesmas cores
+      labs(
+        x = NULL,
+        y = NULL,
+        fill = "Contas")+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background = element_blank(), legend.position="right",legend.title = element_blank(),
+            legend.text = element_text(size = 7))
+    
+    
+    
+    
+  } else{
+    BSPN_filtro<- BSPN_ts[BSPN_ts$codigo == substr(rubrica,1,15),]
+    
+    BSPN_filtro$valor <-  BSPN_filtro$valor/(10^3)
+    
+    BSPN_filtro<- BSPN_filtro[BSPN_filtro$esfera %in% esfera,]
+    
+    p<-ggplot(BSPN_filtro,aes(x=ano,y=valor,colour=esfera,group=esfera)) + geom_line() +
+      scale_y_continuous(labels=function(x) {format(x, big.mark = ".", decimal.mark=",", scientific = FALSE)})+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background = element_blank(), legend.position="bottom",legend.title = element_blank(),
+            legend.text = element_text(size = 7))
+  }
+  
+  p
+  
+}
+
+
+```
+
+Análise
+===================================== 
+
+
+Inputs {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("rubricaNum","Rubrica Numerador",choices = PCASP_trabalho$NOME_COMPLETO, selected = "1.0.0.0.0.00.00 - ATIVO")
+selectInput("rubricaDen","Rubrica Denominador",choices = PCASP_trabalho$NOME_COMPLETO, selected = "2.0.0.0.0.00.00 - PASSIVO E PATRIMÔNIO LIQUIDO")
+
+#textInput("rubricaDen","Rubrica Denominador","2.0.0.0.0.00.00 - PASSIVO E PATRIMÔNIO LIQUIDO")
+radioButtons("tipo_analise_num",
+             "Selecione o tipo de análise para numerador",
+             choices = c("Análise Vertical"= "V",                                                                      "Análise Horizontal"= "H"),
+             selected = "V")
+radioButtons("tipo_analise_den",
+             "Selecione o tipo de análise para denominador",
+             choices = c("Análise Vertical"= "V",                                                                      "Análise Horizontal"= "H"),
+             selected = "V")
+checkboxGroupInput("esferas", 
+                   "Selecione esferas da federação que serão visualizadas nos gráficos",
+                   choices= c("União"="UNIAO",
+                              "Estados" = "ESTADOS",
+                              "Municípios"="MUNICIPIOS"), 
+                   selected = c("UNIAO","ESTADOS","MUNICIPIOS"))
+
+downloadLink("DownloadInd","Download Indicador\n")
+downloadLink("DownloadNum","Download Numerador\n")
+downloadLink("DownloadDen","Download Denominador\n")
+
+
+
+output$DownloadInd<- downloadHandler(
+  filename = function() {
+     paste('Indicador-', Sys.Date(), '.csv', sep='')
+   },
+  content = function(file) {
+     #write.csv2(dados_tabela, file, row.names = FALSE)
+     write.table(dados_tabela, file, sep = ";",row.names = FALSE,fileEncoding = "UTF-8",dec=",")
+   }
+)
+  
+
+
+output$DownloadNum<- downloadHandler(
+  filename = function() {
+     paste('Numerador-', Sys.Date(), '.csv', sep='')
+   },
+  content = function(file) {
+     #write.csv2(dados_tabela, file, row.names = FALSE)
+     write.table(graph_num$data, file, sep = ";",row.names = FALSE,fileEncoding = "UTF-8",dec=",")
+   }
+)
+
+
+
+output$DownloadDen<- downloadHandler(
+  filename = function() {
+     paste('Denominador-', Sys.Date(), '.csv', sep='')
+   },
+  content = function(file) {
+     #write.csv2(dados_tabela, file, row.names = FALSE)
+     write.table(graph_den$data, file, sep = ";",row.names = FALSE,fileEncoding = "UTF-8",dec=",")
+   }
+)
+
+
+
+
+```
+
+
+
+Column 
+-----------------------------------------------------------------------
+
+
+### Tabela do indicador (valores em R$ bilhões)
+```{r}
+
+
+
+DT::renderDataTable({
+
+
+    dados_tabela<<-gera_DadosTabela(input$rubricaNum,input$rubricaDen,
+                     BP_Geral,
+                     PCASP_trabalho)
+    dados_tabela$"Conta/Indicador"<<-substr(dados_tabela$"Conta/Indicador",19,100)
+
+    datatable(dados_tabela,rownames = FALSE, options= list(ordering=FALSE,paging=FALSE,searching= FALSE, info = FALSE, columnDefs =  list(list(className = 'dt-left', targets = 0:0), list(className = 'dt-right', targets = 1:3))),filter = "none", selection = "none")
+  })
+
+
+```
+
+
+  
+### Selecione Numerador
+
+    
+```{r}
+
+
+shinyApp(
+  
+  ui = mainPanel(
+      includeCSS("customClass.css"),
+      shinyTree("treeNum",search = TRUE)
+ ),
+       
+
+  server = function(input,output) {
+    output$treeNum <- renderTree({
+      lista_contas
+
+  })
+    
+    clicked<- reactive({input$treeNum})
+    
+    observeEvent(clicked(),{
+      tree <- input$treeNum
+      updateSelectInput(session,"rubricaNum",selected = unlist(get_selected(tree)))
+      
+    
+    })
+
+  },
+  options = list(height = 600)
+)
+
+
+```
+
+
+
+
+### Selecione Denominador
+
+    
+```{r}
+
+shinyApp(
+  ui = mainPanel(
+      includeCSS("customClass.css"),
+      shinyTree("treeDen",search = TRUE)
+ ),
+       
+
+  server = function(input,output) {
+    output$treeDen <- renderTree({
+      lista_contas
+
+  })
+    
+    clicked<- reactive({input$treeDen})
+    
+    observeEvent(clicked(),{
+      tree <- input$treeDen
+      updateSelectInput(session,"rubricaDen",selected = unlist(get_selected(tree)))
+      
+      
+    })
+
+  },
+  options = list(height = 600)
+)
+
+
+```
+
+
+Column 
+-----------------------------------------------------------------------
+
+### Gráfico comparativo entre as rubricas selecionadas
+
+```{r}
+
+
+
+renderPlot({
+  
+  dados_grafico <- gera_DadosTabela(input$rubricaNum,input$rubricaDen,
+                     BP_Geral,
+                     PCASP_trabalho,
+                     dados_bruto = TRUE)
+  
+  dados_grafico<- dados_grafico[dados_grafico$esfera %in% input$esferas,]
+
+  ggplot(dados_grafico, aes(fill = substr(conta,19,100), y = valor_consolidado, x = esfera)) +
+  coord_flip() +
+  geom_bar(stat="identity", width=0.6, color = "white", size = 1) + 
+  geom_text(aes(label= ifelse(valor_consolidado == 0, "", format(round(valor_consolidado,0), big.mark = ".", decimal.mark = ","))),
+                size = 2.5, 
+                hjust = 0.5, 
+                position = position_stack(vjust = 0.5),
+                family = "Source Sans Pro", 
+                color = "grey20") +
+  scale_y_continuous(labels=function(x) {format(x, big.mark = ".", decimal.mark=",", scientific = FALSE)}) +
+  
+  # scale_color_manual(values = cores_legenda) + #se fosse colocar os rótulos com as mesmas cores
+  labs(
+    x = NULL,
+    y = NULL,
+    fill = "Contas")+
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), legend.position="bottom", legend.title = element_blank())#+
+  #facet_grid(Classe ~ .) + 
+  #tema_BSPN() #+ guides(color = FALSE) # se fosse colocar rótulos c/ core
+  
+
+  
+} )
+
+
+
+```
+
+
+### Análise vertical/Horizontal - Numerador (valores em R$ bilhões)
+
+
+```{r}
+
+library(reshape2)
+
+renderPlot({
+  
+  
+  graph_num<<-geraGraficoAnalise(input$rubricaNum,input$tipo_analise_num, esfera= c(input$esferas))
+  graph_num
+
+})
+
+
+```
+
+
+### Análise vertical/Horizontal - Denominador (valores em R$ bilhões)
+
+```{r}
+renderPlot({
+  
+  
+  graph_den<<-geraGraficoAnalise(input$rubricaDen,input$tipo_analise_den, esfera= c(input$esferas))
+  graph_den
+
+})
+
+
+```
+
+Dicionário de contas
+=====================================
+
+### Contas do PCASP
+
+```{r}
+library(data.table)
+renderDataTable({
+  datatable(PCASP_trabalho[8:10] )
+  
+})
+
+```
+
+Rede de palavras do PCASP
+=====================================
+
+Inputs {.sidebar data-width=200}
+-----------------------------------------------------------------------
+
+
+```{r}
+radioButtons("tipo_layout",
+             "Tipo de layout",
+             choices = c("graphopt"= "graphopt",                                                                      "mds"= "mds",
+                         "drl"="drl",
+                         "kk" ="kk",
+                         "fr"="fr"),
+             selected = "drl")
+numericInput("tam_fonte", "Tamanho da fonte", value=3,
+min=1, max=5, step=1, width = 80)
+sliderInput("correlacao", "Correlação Mínima", min=0.5, max = 1, value = 0.65, step = 0.05)
+selectInput("palavrasSel","Palavras",choices = word_cors$item1,multiple = TRUE)
+
+
+```
+
+Column 
+-----------------------------------------------------------------------
+
+
+### Análise de relacionamento textual do PCASP a parir das funções das contas
+
+```{r}
+#library(slickR)
+
+# shinyApp(
+#   
+#   ui = mainPanel(
+#       
+#       slickROutput("rede_PCASP", width = "100%", height = "600px")
+#  ),
+#        
+# 
+#   server = function(input,output) {
+#     output$rede_PCASP<- renderSlickR({
+#       Img <- c("rede_PCASP_total_photo.png","rede_PCASP_total_photo2.png","rede_PCASP_total_photo3.png", "rede_PCASP_total_photo4.png")
+#    
+#   slickR(obj = Img,slideId = 'ex1')
+# 
+#   })
+#     
+# 
+#   },
+#   options = list(height = 600)
+# )
+
+library(plotly)
+
+
+output$word_graph<-renderPlot({
+  
+library(dplyr)
+library(tidytext)
+library(tidyr)
+library(scales)
+library(ggplot2)
+library(igraph)
+library(ggraph)
+library(widyr)
+
+
+
+  
+# 
+# 
+# #criacção do dataframe que será utilizado para o tratamento de texto
+# funcao_contabil<- PCASP_trabalho[,c(1,15,10)]
+# names(funcao_contabil)[3]<-"FUNCAO"
+# 
+# 
+# texto_df <- dplyr::data_frame(classe = funcao_contabil$CLASSE,conta= funcao_contabil$NOME_COMPLETO, texto =funcao_contabil$FUNCAO)
+# 
+# 
+# #contabem de palavras...
+# analise_contabil <- texto_df %>%
+#   unnest_tokens(palavra,texto) %>%
+#   count(classe, palavra, sort = TRUE) %>%
+#   ungroup()
+# 
+# total_palavras <- analise_contabil %>%
+#           group_by(classe) %>%
+#   summarize(total=sum(n))
+# 
+# 
+# 
+# analise_contabil <- left_join(analise_contabil, total_palavras)
+# 
+# #...para o tratamento tf_idf...
+# analise_contabil <- analise_contabil %>%
+#   bind_tf_idf(palavra, classe, n)
+# 
+# #...que gerrá as stopwords específicas para o pcasp
+# stop_words_pcasp <- unique(c(unique(analise_contabil$palavra[analise_contabil$idf==0]), stopwords::stopwords("pt")))
+# 
+# analise_contabil_secoes <- dplyr::data_frame(classe = funcao_contabil$CLASSE, texto =funcao_contabil$FUNCAO) %>%
+#   mutate(section = row_number() %/% 10) %>%
+#   filter(section > 0) %>%
+#   unnest_tokens(word, texto) %>%
+#   filter(!word %in% stop_words_pcasp)
+# 
+# # count words co-occuring within sections
+# word_pairs <- analise_contabil_secoes %>%
+#   pairwise_count(word, section, sort = TRUE)
+# 
+# 
+# # we need to filter for at least relatively common words first
+# word_cors <- analise_contabil_secoes %>%
+#   group_by(word) %>%
+#   filter(n() >= 20) %>%
+#   pairwise_cor(word, section, sort = TRUE)
+# 
+# save(list="word_cors",file = "word_cors.Rdata")
+
+if (is.null(input$palavrasSel)){
+  words_trabalho <- word_cors
+}  else{
+  words_trabalho <- word_cors[(word_cors$item1 %in% input$palavrasSel) | (word_cors$item2 %in% input$palavrasSel) , ]
+}
+  
+#print(words_trabalho)  
+
+set.seed(2016)
+
+#graphopt, mds, kk, drl e fr como opções
+grafico_pal<<-words_trabalho %>%
+  filter(correlation > input$correlacao) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = input$tipo_layout) +
+  geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE) +
+  geom_node_point(color = "lightblue", size = input$tam_fonte) +
+  geom_node_text(aes(label = name), repel = TRUE,size=input$tam_fonte, color="red") +
+  theme_void()
+
+grafico_pal
+})
+
+
+plotOutput('word_graph',brush = brushOpts(id="plot_brush", resetOnNew = TRUE))
+
+observeEvent(input$plot_brush,{
+     
+     val<- input$plot_brush
+     
+     if (!is.null(val)){
+            vetor_x_palavras <- which(grafico_pal$data$x>= val$xmin & grafico_pal$data$x<= val$xmax) 
+     vetor_y_palavras <- which(grafico_pal$data$y>= val$ymin & grafico_pal$data$y<= val$ymax)
+     
+     
+     #print(paste0("vetor x",vetor_x_palavras))
+     #print(paste0("vetor y",vetor_y_palavras))
+     
+     vetor_palavras <- vetor_x_palavras[which(vetor_x_palavras %in% vetor_y_palavras)] 
+     
+     #print(paste0("vetor palavras",vetor_palavras))
+     
+     palavras <- grafico_pal$data$name[vetor_palavras]
+
+       print(paste0("Palavras",palavras))
+       updateSelectInput(session,"palavrasSel",selected = palavras)
+
+
+       
+     }
+     
+     
+     #print(grafico_pal$data$x)
+     #print(val$x)
+     #print(paste0("Palavra=",palavra))
+     
+})
+ 
+
+
+```
+

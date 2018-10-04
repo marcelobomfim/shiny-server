@@ -1,0 +1,6 @@
+"0","checkboxGroupInput(""esferas"", "
+"0","                   ""Selecione esferas da federação que serão visualizadas nos gráficos"","
+"0","                   choices= c(""União""=""UNIAO"","
+"0","                              ""Estados"" = ""ESTADOS"","
+"0","                              ""Municípios""=""MUNICIPIOS""), "
+"0","                   selected = c(""UNIAO"",""ESTADOS"",""MUNICIPIOS""))"
